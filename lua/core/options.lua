@@ -11,5 +11,6 @@ vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.mouse = 'a'
+vim.opt.scrolloff = 10
 
 

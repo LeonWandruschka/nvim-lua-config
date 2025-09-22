@@ -7,6 +7,10 @@ return {
   },
   config = function()
     require("nvim-tree").setup({
+      filters = {
+        dotfiles = false,      -- Show dotfiles
+        git_ignored = false,   -- Show .gitignored files
+      },
       view = {
         -- Set the name of the NvimTree window to "NvimTree"
         float = {
