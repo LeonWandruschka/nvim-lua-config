@@ -18,14 +18,14 @@
     config = function()
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-      local lspconfig = require("lspconfig")
-      lspconfig.lua_ls.setup({
+      vim.lsp.config("lua_ls", {
         capabilities = capabilities
       })
-      lspconfig.clangd.setup({
+
+      vim.lsp.config("clangd", {
         capabilities = capabilities
       })
-      lspconfig.marksman.setup({
+      vim.lsp.config("marksman", {
         capabilities = capabilities
       })
       vim.keymap.set("n", "I", vim.lsp.buf.hover, {})
