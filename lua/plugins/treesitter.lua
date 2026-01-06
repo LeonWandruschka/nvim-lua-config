@@ -1,7 +1,7 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
 	build = ":TSUpdate",
-	config = function()
+	configs = function()
 		local configs = require("nvim-treesitter.configs")
 		configs.setup({
 			ensure_installed = { "c", "cpp", "verilog", "lua", "vim", "vimdoc" },
