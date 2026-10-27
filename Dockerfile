@@ -19,8 +19,29 @@ RUN apt-get update && \
         clangd \
         nodejs \
         npm \
-        tree-sitter-cli \
         && rm -rf /var/lib/apt/lists/*
+
+# Install command-line tools that are unavailable or outdated in some Ubuntu
+# repositories.
+ARG TREE_SITTER_VERSION=0.27.1
+ARG LAZYGIT_VERSION=0.66.2
+RUN set -eux; \
+    ARCH="$(dpkg --print-architecture)"; \
+    case "$ARCH" in \
+        arm64) TREE_SITTER_ARCH="arm64"; LAZYGIT_ARCH="arm64" ;; \
+        amd64) TREE_SITTER_ARCH="x64"; LAZYGIT_ARCH="x86_64" ;; \
+        *) echo "Unsupported architecture: $ARCH"; exit 1 ;; \
+    esac; \
+    curl -fL \
+        "https://github.com/tree-sitter/tree-sitter/releases/download/v${TREE_SITTER_VERSION}/tree-sitter-cli-linux-${TREE_SITTER_ARCH}.zip" \
+        -o /tmp/tree-sitter.zip; \
+    unzip -o /tmp/tree-sitter.zip -d /usr/local/bin; \
+    curl -fL \
+        "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_linux_${LAZYGIT_ARCH}.tar.gz" \
+        -o /tmp/lazygit.tar.gz; \
+    tar -C /usr/local/bin -xzf /tmp/lazygit.tar.gz lazygit; \
+    chmod +x /usr/local/bin/tree-sitter /usr/local/bin/lazygit; \
+    rm /tmp/tree-sitter.zip /tmp/lazygit.tar.gz
 
 # Install latest stable Neovim
 RUN set -eux; \
@@ -47,4 +68,3 @@ RUN git clone \
 WORKDIR /app
 
 CMD ["/bin/bash"]
-
