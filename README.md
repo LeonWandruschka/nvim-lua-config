@@ -14,6 +14,7 @@ Ensure you have the following dependencies installed:
 - **ripgrep** (For Telescope text search)
 - **LazyGit** (For Git integration)
 - **clangd** (Installed locally for architecture-independent C/C++ LSP support)
+- **tree-sitter CLI** (For compiling Treesitter parsers)
 - **StyLua** and **clang-format** (For formatting through none-ls)
 
 Mason installs `lua_ls`, `marksman`, `tinymist`, and the C/C++ debug adapter. `clangd` is deliberately installed through the system package manager instead of Mason to avoid ARM/x86 binary conflicts.
@@ -22,25 +23,15 @@ Install dependencies using your package manager. For example, on Ubuntu:
 
 ```bash
 sudo apt update
-sudo apt install git curl unzip tar build-essential ripgrep universal-ctags clangd clang-format
+sudo apt install git curl unzip tar build-essential ripgrep universal-ctags clangd clang-format nodejs npm cargo tree-sitter-cli
 ```
 
 On macOS, you can use Homebrew:
 
 ```bash
 xcode-select --install
-brew install neovim git ripgrep lazygit universal-ctags stylua llvm
+brew install neovim git ripgrep lazygit universal-ctags stylua llvm tree-sitter-cli nodejs npm
 ```
-
-Homebrew's LLVM is keg-only, so add it to your `PATH`:
-
-```bash
-echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
-```
-
-If Mason previously installed `clangd`, remove that copy with
-`:MasonUninstall clangd` so it cannot take precedence over the local executable.
-Confirm the local installation with `clangd --version`.
 
 Optionally install the configured icon font:
 ```bash

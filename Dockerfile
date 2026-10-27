@@ -19,6 +19,7 @@ RUN apt-get update && \
         clangd \
         nodejs \
         npm \
+        tree-sitter-cli \
         && rm -rf /var/lib/apt/lists/*
 
 # Install latest stable Neovim

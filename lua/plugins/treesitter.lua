@@ -1,29 +1,22 @@
 local languages = {
-  -- config
   "vim",
   "vimdoc",
   "lua",
-
-  -- programming
   "c",
   "cpp",
   "python",
-  "verilog",
-
-  -- documentation
+  "systemverilog",
   "markdown",
   "typst",
 }
 
 return {
   "nvim-treesitter/nvim-treesitter",
+  branch = "main",
+  lazy = false,
   build = ":TSUpdate",
+
   config = function()
-    require("nvim-treesitter.configs").setup({
-      ensure_installed = languages,
-      auto_install = true,
-      highlight = { enable = true },
-      indent = { enable = true },
-    })
+    require("nvim-treesitter").install(languages)
   end,
 }

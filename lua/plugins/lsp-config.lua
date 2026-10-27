@@ -5,6 +5,12 @@ local servers = {
   "tinymist",
 }
 
+-- Currently there is no arm version of clangd in mason,
+-- so we are using the system clangd instead of the mason one.
+local mason_servers = vim.tbl_filter(function(server)
+  return server ~= "clangd"
+end, servers)
+
 return {
   {
     "williamboman/mason.nvim",
@@ -14,7 +20,7 @@ return {
     "williamboman/mason-lspconfig.nvim",
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = servers,
+        ensure_installed = mason_servers,
       })
     end,
   },
@@ -28,7 +34,6 @@ return {
         -- Currently there is no arm version of clangd in mason,
         -- so we are using the system clangd instead of the mason one.
         if server == "clangd" then
-          config.mason = false
           config.cmd = { "clangd", "--background-index", "--clang-tidy" }
         end
 
