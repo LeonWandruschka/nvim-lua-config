@@ -1,25 +1,59 @@
 # Neovim Configuration in Lua
 
-Welcome to my **Neovim Configuration**! This setup leverages Lua for a modern, high-performance coding experience, packed with essential plugins and optimized keybindings.
+Welcome to my **Neovim Configuration**!
 
 ## 🚀 Installation
+
+### 📌 Prerequisites
+
+Ensure you have the following dependencies installed:
+
+- **Neovim** (Version 0.11 or higher)
+- **Exuberant Ctags** (For tag generation)
+- **JetBrains Nerd Font or similar mono font** ([Download here](https://www.nerdfonts.com/font-downloads))
+- **ripgrep** (For Telescope text search)
+- **LazyGit** (For Git integration)
+- **clangd** (Installed locally for architecture-independent C/C++ LSP support)
+- **StyLua** and **clang-format** (For formatting through none-ls)
+
+Mason installs `lua_ls`, `marksman`, `tinymist`, and the C/C++ debug adapter. `clangd` is deliberately installed through the system package manager instead of Mason to avoid ARM/x86 binary conflicts.
+
+Install dependencies using your package manager. For example, on Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install git curl unzip tar build-essential ripgrep universal-ctags clangd clang-format
+```
+
+On macOS, you can use Homebrew:
+
+```bash
+xcode-select --install
+brew install neovim git ripgrep lazygit universal-ctags stylua llvm
+```
+
+Homebrew's LLVM is keg-only, so add it to your `PATH`:
+
+```bash
+echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
+```
+
+If Mason previously installed `clangd`, remove that copy with
+`:MasonUninstall clangd` so it cannot take precedence over the local executable.
+Confirm the local installation with `clangd --version`.
+
+Optionally install the configured icon font:
+```bash
+brew install --cask font-jetbrains-mono-nerd-font
+```
+
+### ⚙️ Configuration
 
 Clone this repository into your Neovim configuration directory:
 
 ```bash
 git clone https://github.com/LeonWandruschka/nvim-lua-config.git ~/.config/nvim
 ```
-
-## 📌 Prerequisites
-
-Ensure you have the following dependencies installed:
-
-- **Neovim** (Version 0.7.5 or higher)
-- **Exuberant Ctags** (For tag generation)
-- **JetBrains Nerd Font** ([Download here](https://www.nerdfonts.com/font-downloads))
-- **clangd** (C/C++ language server support)
-- **LLVM** (Includes `lldb` and `lldb-dap` for debugging)
-- **Vim** (For backward compatibility with Vimscript configurations)
 
 ## 🌟 Featured Plugins
 
@@ -30,13 +64,15 @@ This configuration includes powerful plugins to enhance productivity:
 - 🔍 `telescope.nvim` - Fuzzy file searching and previewing
 - 📝 `treesitter` - Improved syntax highlighting
 - 🔧 `nvim-lspconfig` - Language Server Protocol setup
-- 🛠️ `none-ls.nvim` - Lightweight LSP alternative
+- ✨ `nvim-cmp` - LSP completion and snippets
+- 🛠️ `none-ls.nvim` - StyLua and clang-format integration
 - 📂 `nvim-tree` - File explorer
 - 🛑 `dap.nvim` - Debug Adapter Protocol for debugging
 - 📝 `neogen` - Generate Doxygen-style comments
 - 🏷️ `tagbar` - Displays tags in a sidebar
 - ✅ `todo-comments` - Highlights TODO/FIXME comments
 - 🔗 `lazygit` - Git integration
+- 📄 `typst-preview.nvim` - Live Typst preview using Tinymist
 
 ## 🎮 Keybindings
 
@@ -46,26 +82,33 @@ Enhance your workflow with these shortcuts:
 
 | Action | Keybinding |
 |--------|-----------|
-| **Leader Key** | `,` |
+| **Leader Key** | `<Space>` |
 | **Hover for Function Info** | `I` |
 | **Go to Definition** | `<leader>gd` |
-| **Go to Last Cursor Position** | `<C-o>` |
 | **Code Action** | `<leader>ca` |
 | **Format Code** | `<leader>cf` |
-| **Open File Explorer** | `<C-b>` |
-| **Search Files** | `<C-p>` |
+| **Toggle File Explorer** | `<C-n>` |
+| **Focus File Explorer** | `<leader>e` |
+| **Search Files** | `<leader>ff` |
+| **Search All Files** | `<leader>fa` |
 | **Search Text (Ripgrep)** | `<leader>g` |
+| **Generate Documentation** | `<leader>nd` |
 
 ### Debugging Keybindings
 
 | Action | Keybinding |
 |--------|-----------|
 | **Run Build Task** | `<leader>bb` |
-| **Add Breakpoint** | `<leader>db` |
+| **Toggle Breakpoint** | `<leader>db` |
+| **Conditional Breakpoint** | `<leader>dB` |
 | **Start Debugging** | `<leader>dc` |
 | **Step Over** | `<leader>do` |
 | **Step Into** | `<leader>di` |
 | **Step Out** | `<leader>du` |
+| **Pause Debugging** | `<leader>dp` |
+| **Terminate Debugging** | `<leader>dt` |
+| **Open DAP REPL** | `<leader>dr` |
+| **Run Last Session** | `<leader>dl` |
 | **Toggle DAP UI** | `<leader>dut` |
 
 ### Git Keybindings
@@ -73,15 +116,16 @@ Enhance your workflow with these shortcuts:
 | Action | Keybinding |
 |--------|-----------|
 | **Open LazyGit** | `<leader>lg` |
-| **Git Diff** | `<leader>gd` |
-| **Git Commit** | `<leader>gc` |
 
-### Copilot Keybindings
+### Completion Keybindings
 
 | Action | Keybinding |
 |--------|-----------|
-| **Enable Copilot** | `:Copilot setup` |
-| **Accept Suggestion** | `<Right>` |
+| **Open Completion** | `<C-Space>` |
+| **Close Completion** | `<C-e>` |
+| **Confirm Completion** | `<CR>` |
+| **Next Item / Snippet Field** | `<Tab>` |
+| **Previous Item / Snippet Field** | `<S-Tab>` |
 
 ## 📁 Directory Structure
 
@@ -92,11 +136,9 @@ Understand the file tree for easy customization:
 ├── Dockerfile
 ├── README.md
 ├── init.lua
-├── lazy-lock.json
 └── lua
     ├── core
     │   ├── colorscheme.lua
-    │   ├── commands.lua
     │   ├── keymaps.lua
     │   └── options.lua
     └── plugins
@@ -105,6 +147,7 @@ Understand the file tree for easy customization:
         ├── colorscheme.lua
         ├── completion.lua
         ├── debugging.lua
+        ├── diagnostics.lua
         ├── lazygit.lua
         ├── lsp-config.lua
         ├── lualine.lua
@@ -114,7 +157,8 @@ Understand the file tree for easy customization:
         ├── tagbar.lua
         ├── telescope.lua
         ├── todo_comments.lua
-        └── treesitter.lua
+        ├── treesitter.lua
+        └── typst-preview.lua
 ```
 
 ## 🐳 Running in Docker
@@ -122,21 +166,17 @@ Understand the file tree for easy customization:
 You can try this configuration inside a **Docker container**:
 
 ```zsh
-docker build -t neovim-config-test .
+docker build -t neovim-config .
 ```
 
 Run the container:
 
 ```zsh
-docker run --rm -it neovim-config-test
+docker run --rm -it neovim-config
 ```
 
 To remove the image afterward:
 
 ```zsh
-docker rmi neovim-config-test
+docker rmi neovim-config
 ```
-
----
-
-🚀 **Enjoy your enhanced Neovim experience!** 🚀

@@ -1,27 +1,50 @@
--- Map ',' to <Leader>
 vim.g.mapleader = " "
 
--- Map <C-j> to <Down> in Insert mode
-vim.keymap.set('i', '<C-j>', '<Down>', {silent = true, noremap = true})
+local map = vim.keymap.set
 
--- Map <C-k> to <Up> in Insert mode
-vim.keymap.set('i', '<C-k>', '<Up>', {silent = true, noremap = true})
+-- Insert mode mappings
+map("i", "<C-b>", "<Esc>^i", { desc = "Start of line" })
+map("i", "<C-e>", "<End>", { desc = "End of line" })
+map("i", "<C-h>", "<Left>", { desc = "Move left" })
+map("i", "<C-j>", "<Down>", { desc = "Move down" })
+map("i", "<C-k>", "<Up>", { desc = "Move up" })
+map("i", "<C-l>", "<Right>", { desc = "Move right" })
 
--- Map <C-h> to <Left> in Insert mode
-vim.keymap.set('i', '<C-h>', '<Left>', {silent = true, noremap = true})
+-- Window navigation mappings
+map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
--- Map <C-l> to <Right> in Insert mode
-vim.keymap.set('i', '<C-l>', '<Right>', {silent = true, noremap = true})
+-- Clear search highlight
+map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 
--- Map <C-f> to <Right> in Insert mode (same as <C-l>)
-vim.keymap.set('i', '<C-f>', '<Right>', {silent = true, noremap = true})
+-- File search mappings
+map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find files" })
+map("n", "<leader>fa", "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<cr>", { desc = "Find all files" })
+map("n", "<leader>g", "<cmd>Telescope live_grep<cr>", { desc = "Find text" })
 
--- Map <C-d> to <Del> in Insert mode
-vim.keymap.set('i', '<C-d>', '<Del>', {silent = true, noremap = true})
+-- Comment mappings
+map("n", "<leader>/", "gcc", { remap = true, desc = "Toggle comment" })
+map("x", "<leader>/", "gc", { remap = true, desc = "Toggle comment" })
 
--- Map :tabnext<CR> to <TAB> in Normal mode
-vim.keymap.set('n', '<TAB>', ':tabnext<CR>', {silent = true, noremap = true})
+-- File tree mappings
+map("n", "<C-n>", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle file tree" })
+map("n", "<leader>e", "<cmd>NvimTreeFocus<cr>", { desc = "Focus file tree" })
 
--- Map :tabprevious<CR> to <TAB> in Normal mode
-vim.keymap.set('n', '<S-TAB>', ':tabprevious<CR>', {silent = true, noremap = true})
+-- Code navigation and actions
+map("n", "I", vim.lsp.buf.hover, { desc = "LSP hover" })
+map("n", "<leader>gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+map({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+map("n", "<leader>cf", vim.lsp.buf.format, { desc = "Format file" })
+
+-- The only Git mapping.
+map("n", "<leader>lg", "<cmd>LazyGit<cr>", { desc = "LazyGit" })
+
+-- Doxygen like comments
+map("n", "<leader>nd", "<cmd>Neogen<cr>", { desc = "Generate documentation" })
+
+-- Tagbar mappings
+map({ "n", "i" }, "<leader>tb", "<Esc><cmd>TagbarOpen<cr>", { desc = "Open Tagbar" })
+map({ "n", "i" }, "<leader>tc", "<Esc><cmd>TagbarClose<cr>", { desc = "Close Tagbar" })
 

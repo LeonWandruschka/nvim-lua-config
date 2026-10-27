@@ -1,37 +1,40 @@
-  return {
+local servers = {
+  "lua_ls",
+  "clangd",
+  "marksman",
+  "tinymist",
+}
+
+return {
   {
     "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup()
-    end,
+    config = true,
   },
   {
     "williamboman/mason-lspconfig.nvim",
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "clangd", "marksman" },
+        ensure_installed = servers,
       })
     end,
   },
   {
     "neovim/nvim-lspconfig",
     config = function()
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      vim.lsp.config("lua_ls", {
-        capabilities = capabilities
-      })
+      for _, server in ipairs(servers) do
+        local config = { capabilities = capabilities }
+        -- Currently there is no arm version of clangd in mason,
+        -- so we are using the system clangd instead of the mason one.
+        if server == "clangd" then
+          config.mason = false
+          config.cmd = { "clangd", "--background-index", "--clang-tidy" }
+        end
 
-      vim.lsp.config("clangd", {
-        capabilities = capabilities
-      })
-      vim.lsp.config("marksman", {
-        capabilities = capabilities
-      })
-      vim.keymap.set("n", "I", vim.lsp.buf.hover, {})
-      vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
-      vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
+        vim.lsp.config(server, config)
+        vim.lsp.enable(server)
+      end
     end,
   },
 }
-
