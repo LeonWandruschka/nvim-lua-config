@@ -13,6 +13,9 @@ end
 -- make lazy.nvim available in runtime path
 vim.opt.rtp:prepend(lazypath)
 
+-- Do not show Netrw banner
+vim.g.netrw_banner = 0
+
 require("core.options")
 require("core.keymaps")
 require("lazy").setup("plugins", { change_detection = { notify = false } })
